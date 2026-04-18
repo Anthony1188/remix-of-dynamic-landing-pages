@@ -44,7 +44,8 @@ const Contact = () => {
           </div>
         </div>
 
-        <div className="lg:col-span-7">
+        <div className="lg:col-span-7 space-y-8">
+          <QuoteWidget />
           {submitted ? (
             <div className="glass rounded-lg p-10">
               <div className="font-mono text-xs uppercase tracking-widest text-primary">

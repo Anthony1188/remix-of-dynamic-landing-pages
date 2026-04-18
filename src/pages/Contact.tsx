@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Mail, Phone, MapPin, ArrowUpRight } from "lucide-react";
+import { QuoteWidget } from "@/components/QuoteWidget";
 
 const services = ["Automotive", "Marine & Yacht", "Industrial Cold-Chain", "Other"];
 

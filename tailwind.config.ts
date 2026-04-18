@@ -13,12 +13,22 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        display: ['"Space Grotesk"', "sans-serif"],
+        body: ['"Inter"', "sans-serif"],
+        mono: ['"JetBrains Mono"', "monospace"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        brand: {
+          cyan: "hsl(var(--brand-cyan))",
+          blue: "hsl(var(--brand-blue))",
+          ice: "hsl(var(--brand-ice))",
+        },
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",

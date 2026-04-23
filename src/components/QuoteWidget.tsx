@@ -1,312 +1,354 @@
-import { useMemo, useState } from "react";
-import { ArrowLeft, ArrowUpRight, Check, Copy, RotateCcw, Snowflake } from "lucide-react";
+import { useState } from "react";
+import { ArrowUpRight, Download, RotateCcw, Snowflake, Zap } from "lucide-react";
+import jsPDF from "jspdf";
 
 type CategoryId = "automotive" | "marine" | "industrial";
-type SizeId = "small" | "medium" | "large";
-type ConditionId = "light" | "moderate" | "heavy";
 
 const CATEGORIES: {
   id: CategoryId;
-  emoji: string;
-  title: string;
-  desc: string;
-  baseRate: number; // USD per hour baseline
+  label: string;
+  baseRate: number; // USD per estimated hour
+  baseHours: number;
 }[] = [
-  { id: "automotive", emoji: "🚗", title: "Automotive", desc: "Classic restorations & undercarriages", baseRate: 220 },
-  { id: "marine", emoji: "🛥️", title: "Marine", desc: "Hull cleaning & engine rooms", baseRate: 285 },
-  { id: "industrial", emoji: "🏗️", title: "Industrial", desc: "Production lines & heavy machinery", baseRate: 340 },
+  { id: "automotive", label: "Automotive", baseRate: 220, baseHours: 5 },
+  { id: "marine", label: "Marine / Vessel", baseRate: 285, baseHours: 7 },
+  { id: "industrial", label: "Industrial / Heavy", baseRate: 340, baseHours: 9 },
 ];
 
-const SIZES: { id: SizeId; label: string; sub: string; hours: number }[] = [
-  { id: "small", label: "Small", sub: "≤ 4 hrs", hours: 3 },
-  { id: "medium", label: "Medium", sub: "4–8 hrs", hours: 6 },
-  { id: "large", label: "Large", sub: "8+ hrs", hours: 10 },
-];
-
-const CONDITIONS: { id: ConditionId; label: string; sub: string; mult: number }[] = [
-  { id: "light", label: "Light", sub: "Surface dust", mult: 1.0 },
-  { id: "moderate", label: "Moderate", sub: "Grease & grime", mult: 1.25 },
-  { id: "heavy", label: "Heavy", sub: "Rust & buildup", mult: 1.55 },
-];
+interface Estimate {
+  reference: string;
+  low: number;
+  high: number;
+  hours: number;
+  customer: string;
+  email: string;
+  category: string;
+  asset: string;
+  scope: string;
+  date: string;
+}
 
 export const QuoteWidget = () => {
-  const [step, setStep] = useState(1);
-  const [category, setCategory] = useState<CategoryId | null>(null);
-  const [size, setSize] = useState<SizeId | null>(null);
-  const [condition, setCondition] = useState<ConditionId | null>(null);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [category, setCategory] = useState<CategoryId>("automotive");
+  const [asset, setAsset] = useState("");
+  const [scope, setScope] = useState("");
   const [generating, setGenerating] = useState(false);
-  const [showQuote, setShowQuote] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [estimate, setEstimate] = useState<Estimate | null>(null);
 
-  const totalSteps = 3;
-  const progress = (Math.min(step, totalSteps) / totalSteps) * 100;
-
-  const quote = useMemo(() => {
-    if (!category || !size || !condition) return null;
+  const buildEstimate = (): Estimate => {
     const cat = CATEGORIES.find((c) => c.id === category)!;
-    const sz = SIZES.find((s) => s.id === size)!;
-    const cn = CONDITIONS.find((c) => c.id === condition)!;
-    const subtotal = cat.baseRate * sz.hours * cn.mult;
+    // Rough "intelligence": longer scope description bumps hours.
+    const scopeFactor = Math.min(1.6, 1 + scope.trim().split(/\s+/).filter(Boolean).length / 80);
+    const hours = Math.max(2, Math.round(cat.baseHours * scopeFactor));
+    const subtotal = cat.baseRate * hours;
     const low = Math.round((subtotal * 0.9) / 25) * 25;
-    const high = Math.round((subtotal * 1.15) / 25) * 25;
-    return { low, high, hours: sz.hours, category: cat.title, size: sz.label, condition: cn.label };
-  }, [category, size, condition]);
-
-  const reset = () => {
-    setStep(1);
-    setCategory(null);
-    setSize(null);
-    setCondition(null);
-    setShowQuote(false);
-    setCopied(false);
+    const high = Math.round((subtotal * 1.2) / 25) * 25;
+    const reference = `DJ-${Date.now().toString(36).toUpperCase().slice(-6)}`;
+    return {
+      reference,
+      low,
+      high,
+      hours,
+      customer: name.trim(),
+      email: email.trim(),
+      category: cat.label,
+      asset: asset.trim() || "—",
+      scope: scope.trim() || "—",
+      date: new Date().toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }),
+    };
   };
 
-  const generate = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim() || !email.trim()) return;
     setGenerating(true);
     setTimeout(() => {
+      setEstimate(buildEstimate());
       setGenerating(false);
-      setShowQuote(true);
-    }, 900);
+    }, 1100);
   };
 
-  const copyQuote = async () => {
-    if (!quote) return;
-    const text = `DryJet Solutions — Estimated Quote
-Service: ${quote.category}
-Job size: ${quote.size} (~${quote.hours} hrs)
-Condition: ${quote.condition}
-Estimated range: $${quote.low.toLocaleString()} – $${quote.high.toLocaleString()}`;
-    await navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const reset = () => {
+    setEstimate(null);
   };
 
-  const canAdvance =
-    (step === 1 && !!category) || (step === 2 && !!size) || (step === 3 && !!condition);
+  const downloadPdf = () => {
+    if (!estimate) return;
+    const doc = new jsPDF({ unit: "pt", format: "letter" });
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    // Header bar
+    doc.setFillColor(10, 10, 10);
+    doc.rect(0, 0, pageWidth, 90, "F");
+    doc.setTextColor(56, 189, 248);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(22);
+    doc.text("DRYJET", 40, 50);
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.text("SOLUTIONS  ·  Official Estimate", 40, 68);
+    doc.setFontSize(9);
+    doc.setTextColor(180, 180, 180);
+    doc.text(`Ref: ${estimate.reference}`, pageWidth - 40, 50, { align: "right" });
+    doc.text(estimate.date, pageWidth - 40, 68, { align: "right" });
+
+    // Body
+    doc.setTextColor(20, 20, 20);
+    let y = 130;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.text("Estimate Summary", 40, y);
+    y += 24;
+
+    const row = (label: string, value: string) => {
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(10);
+      doc.setTextColor(90, 90, 90);
+      doc.text(label.toUpperCase(), 40, y);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(11);
+      doc.setTextColor(20, 20, 20);
+      const lines = doc.splitTextToSize(value, pageWidth - 220);
+      doc.text(lines, 220, y);
+      y += Math.max(20, lines.length * 14);
+    };
+
+    row("Customer", estimate.customer);
+    row("Email", estimate.email);
+    row("Category", estimate.category);
+    row("Asset", estimate.asset);
+    row("Scope", estimate.scope);
+    row("Estimated hours", `~${estimate.hours} hours`);
+
+    y += 16;
+    doc.setDrawColor(220, 220, 220);
+    doc.line(40, y, pageWidth - 40, y);
+    y += 30;
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.setTextColor(20, 20, 20);
+    doc.text("Estimated Range", 40, y);
+    doc.setFontSize(20);
+    doc.setTextColor(37, 99, 235);
+    doc.text(
+      `$${estimate.low.toLocaleString()} – $${estimate.high.toLocaleString()}`,
+      pageWidth - 40,
+      y,
+      { align: "right" },
+    );
+
+    y += 50;
+    doc.setFont("helvetica", "italic");
+    doc.setFontSize(9);
+    doc.setTextColor(110, 110, 110);
+    const disclaimer =
+      "Estimate based on 2026 market data and the details provided. Final pricing confirmed after on-site assessment by a senior DryJet technician. Valid for 30 days from the date above.";
+    doc.text(doc.splitTextToSize(disclaimer, pageWidth - 80), 40, y);
+
+    // Footer
+    doc.setFontSize(8);
+    doc.setTextColor(140, 140, 140);
+    doc.text(
+      "DryJet Solutions LLC  ·  Tampa Bay Operations  ·  service@dryjetsolutions.com",
+      pageWidth / 2,
+      doc.internal.pageSize.getHeight() - 30,
+      { align: "center" },
+    );
+
+    doc.save(`DryJet-Estimate-${estimate.reference}.pdf`);
+  };
 
   return (
     <div className="glass rounded-2xl overflow-hidden">
-      {/* Header */}
-      <div className="px-6 pt-6 pb-5 flex items-start justify-between gap-4">
-        <div>
-          <div className="font-mono text-[10px] uppercase tracking-widest text-primary">
-            / Instant Quote
+      {/* Brand hero */}
+      <div className="bg-black px-6 py-8 flex items-center justify-center border-b border-[hsl(var(--brand-cyan))]/40">
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 rounded-full glass-primary flex items-center justify-center">
+            <Snowflake size={20} strokeWidth={1.5} />
           </div>
-          <h3 className="mt-2 text-2xl font-light leading-tight">
-            {showQuote ? "Your estimate" : "Configure your job"}
-          </h3>
-          <p className="mt-1 text-xs text-muted-foreground">
-            {showQuote
-              ? "Indicative range based on 2026 market data."
-              : `Step ${Math.min(step, totalSteps)} of ${totalSteps}`}
-          </p>
-        </div>
-        <div className="h-10 w-10 rounded-full glass-primary flex items-center justify-center shrink-0">
-          <Snowflake size={18} strokeWidth={1.5} />
+          <div className="leading-none">
+            <div className="text-2xl font-semibold tracking-[0.2em] text-gradient-brand">
+              DRYJET
+            </div>
+            <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.35em] text-muted-foreground">
+              Solutions
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Progress */}
-      <div className="h-[3px] bg-white/5 relative">
-        <div
-          className="absolute inset-y-0 left-0 bg-gradient-to-r from-[hsl(var(--brand-cyan))] to-[hsl(var(--brand-blue))] transition-[width] duration-500"
-          style={{ width: `${showQuote ? 100 : progress}%` }}
-        />
-      </div>
-
-      {/* Body */}
-      <div className="p-6">
-        {!showQuote && step === 1 && (
-          <div className="space-y-3">
-            <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-1">
-              Choose your category
+      {!estimate ? (
+        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+          <div>
+            <div className="font-mono text-[10px] uppercase tracking-widest text-primary">
+              / Technician Analysis
             </div>
-            {CATEGORIES.map((c) => {
-              const selected = category === c.id;
-              return (
-                <button
-                  key={c.id}
-                  type="button"
-                  onClick={() => setCategory(c.id)}
-                  className={`w-full text-left rounded-xl px-4 py-4 flex items-center gap-4 transition-all border ${
-                    selected
-                      ? "border-primary bg-primary/10"
-                      : "border-white/10 bg-white/[0.03] hover:bg-white/[0.06]"
-                  }`}
-                >
-                  <span className="text-2xl">{c.emoji}</span>
-                  <span className="flex-1">
-                    <span className="block text-foreground">{c.title}</span>
-                    <span className="block text-xs text-muted-foreground mt-0.5">{c.desc}</span>
-                  </span>
-                  {selected && <Check size={16} className="text-primary" />}
-                </button>
-              );
-            })}
+            <h3 className="mt-2 text-2xl font-light leading-tight">
+              Submit your project for an expert quote.
+            </h3>
           </div>
-        )}
 
-        {!showQuote && step === 2 && (
-          <div className="space-y-3">
-            <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-1">
-              Estimated job size
-            </div>
-            {SIZES.map((s) => {
-              const selected = size === s.id;
-              return (
-                <button
-                  key={s.id}
-                  type="button"
-                  onClick={() => setSize(s.id)}
-                  className={`w-full text-left rounded-xl px-4 py-4 flex items-center justify-between transition-all border ${
-                    selected
-                      ? "border-primary bg-primary/10"
-                      : "border-white/10 bg-white/[0.03] hover:bg-white/[0.06]"
-                  }`}
-                >
-                  <span>
-                    <span className="block text-foreground">{s.label}</span>
-                    <span className="block text-xs text-muted-foreground mt-0.5">{s.sub}</span>
-                  </span>
-                  {selected && <Check size={16} className="text-primary" />}
-                </button>
-              );
-            })}
+          <div className="grid sm:grid-cols-2 gap-3">
+            <Field label="Customer name" required>
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                placeholder="Your full name"
+                className="w-full bg-transparent border-none outline-none text-foreground placeholder:text-muted-foreground/50"
+              />
+            </Field>
+            <Field label="Email address" required>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                placeholder="you@example.com"
+                className="w-full bg-transparent border-none outline-none text-foreground placeholder:text-muted-foreground/50"
+              />
+            </Field>
           </div>
-        )}
 
-        {!showQuote && step === 3 && (
-          <div className="space-y-3">
-            <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-1">
-              Surface condition
-            </div>
-            {CONDITIONS.map((c) => {
-              const selected = condition === c.id;
-              return (
-                <button
-                  key={c.id}
-                  type="button"
-                  onClick={() => setCondition(c.id)}
-                  className={`w-full text-left rounded-xl px-4 py-4 flex items-center justify-between transition-all border ${
-                    selected
-                      ? "border-primary bg-primary/10"
-                      : "border-white/10 bg-white/[0.03] hover:bg-white/[0.06]"
-                  }`}
-                >
-                  <span>
-                    <span className="block text-foreground">{c.label}</span>
-                    <span className="block text-xs text-muted-foreground mt-0.5">{c.sub}</span>
-                  </span>
-                  {selected && <Check size={16} className="text-primary" />}
-                </button>
-              );
-            })}
-          </div>
-        )}
-
-        {showQuote && quote && (
-          <div className="space-y-5">
-            <div className="rounded-xl glass-primary p-6 text-center">
-              <div className="font-mono text-[10px] uppercase tracking-widest opacity-80">
-                Estimated range
-              </div>
-              <div className="mt-2 text-4xl font-light tracking-tight">
-                ${quote.low.toLocaleString()}
-                <span className="text-2xl opacity-70"> – </span>
-                ${quote.high.toLocaleString()}
-              </div>
-              <div className="mt-2 text-xs opacity-80">
-                ~{quote.hours} hrs · {quote.category} · {quote.condition}
-              </div>
-            </div>
-            <div className="space-y-2 text-xs text-muted-foreground">
-              <div className="flex justify-between">
-                <span>Service</span>
-                <span className="text-foreground">{quote.category}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Job size</span>
-                <span className="text-foreground">{quote.size}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Condition</span>
-                <span className="text-foreground">{quote.condition}</span>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Footer / Actions */}
-      <div className="px-6 pb-6 pt-2">
-        {!showQuote ? (
-          <div className="flex items-center gap-3">
-            {step > 1 && (
-              <button
-                type="button"
-                onClick={() => setStep((s) => s - 1)}
-                className="rounded-xl px-4 py-3 text-sm border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] transition-colors inline-flex items-center gap-2"
+          <div className="grid sm:grid-cols-2 gap-3">
+            <Field label="Asset category">
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value as CategoryId)}
+                className="w-full bg-transparent border-none outline-none text-foreground"
               >
-                <ArrowLeft size={16} />
-                Back
-              </button>
+                {CATEGORIES.map((c) => (
+                  <option key={c.id} value={c.id} className="bg-background">
+                    {c.label}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <Field label="Asset details">
+              <input
+                value={asset}
+                onChange={(e) => setAsset(e.target.value)}
+                placeholder="e.g. 1967 Mustang chassis"
+                className="w-full bg-transparent border-none outline-none text-foreground placeholder:text-muted-foreground/50"
+              />
+            </Field>
+          </div>
+
+          <Field label="Project scope & description">
+            <textarea
+              value={scope}
+              onChange={(e) => setScope(e.target.value)}
+              rows={4}
+              placeholder="Describe the surfaces, contamination, access constraints, and desired outcome…"
+              className="w-full bg-transparent border-none outline-none text-foreground placeholder:text-muted-foreground/50 resize-none"
+            />
+          </Field>
+
+          <button
+            type="submit"
+            disabled={generating || !name.trim() || !email.trim()}
+            className="w-full glass-primary rounded-xl py-4 font-medium text-sm tracking-wide hover:brightness-110 transition-all inline-flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed group"
+          >
+            {generating ? (
+              <>
+                <span className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                Analyzing project…
+              </>
+            ) : (
+              <>
+                Get my DryJet quote
+                <ArrowUpRight
+                  size={16}
+                  className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
+                />
+              </>
             )}
+          </button>
+        </form>
+      ) : (
+        <div className="p-6 space-y-5">
+          <div className="rounded-xl glass-primary p-6">
+            <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest opacity-80">
+              <Zap size={12} />
+              Official estimate for {estimate.customer}
+            </div>
+            <div className="mt-3 text-4xl font-light tracking-tight">
+              ${estimate.low.toLocaleString()}
+              <span className="text-2xl opacity-70"> – </span>
+              ${estimate.high.toLocaleString()}
+            </div>
+            <div className="mt-2 text-xs opacity-80">
+              ~{estimate.hours} hrs · {estimate.category} · Ref {estimate.reference}
+            </div>
+          </div>
+
+          <div className="space-y-2 text-xs text-muted-foreground">
+            <SummaryRow label="Asset" value={estimate.asset} />
+            <SummaryRow label="Email" value={estimate.email} />
+            <SummaryRow label="Issued" value={estimate.date} />
+          </div>
+
+          <div className="space-y-3 pt-1">
             <button
               type="button"
-              disabled={!canAdvance || generating}
-              onClick={() => {
-                if (step < totalSteps) setStep((s) => s + 1);
-                else generate();
-              }}
-              className="flex-1 glass-primary rounded-xl py-3 text-sm font-medium inline-flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed hover:brightness-110 transition-all"
+              onClick={downloadPdf}
+              className="w-full glass-primary rounded-xl py-3.5 text-sm font-medium inline-flex items-center justify-center gap-2 hover:brightness-110 transition-all"
             >
-              {generating ? (
-                <>
-                  <span className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-                  Calculating
-                </>
-              ) : step < totalSteps ? (
-                <>
-                  Continue
-                  <ArrowUpRight size={16} />
-                </>
-              ) : (
-                <>
-                  Generate Quote
-                  <ArrowUpRight size={16} />
-                </>
-              )}
+              <Download size={16} />
+              Download official PDF report
             </button>
-          </div>
-        ) : (
-          <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={reset}
-              className="rounded-xl px-4 py-3 text-sm border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] transition-colors inline-flex items-center gap-2"
+              className="w-full rounded-xl py-3 text-sm border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] transition-colors inline-flex items-center justify-center gap-2 text-muted-foreground"
             >
               <RotateCcw size={14} />
-              Start over
-            </button>
-            <button
-              type="button"
-              onClick={copyQuote}
-              className="flex-1 glass-primary rounded-xl py-3 text-sm font-medium inline-flex items-center justify-center gap-2 hover:brightness-110 transition-all"
-            >
-              {copied ? <Check size={16} /> : <Copy size={16} />}
-              {copied ? "Copied" : "Copy quote"}
+              Cancel & start a new quote
             </button>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       <div className="px-6 pb-5 pt-2 border-t border-white/5">
         <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground text-center">
-          Powered by DryJet AI · Market Data 2026
+          DryJet Solutions LLC · Tampa Bay Operations
         </div>
       </div>
     </div>
   );
 };
+
+const Field = ({
+  label,
+  required,
+  children,
+}: {
+  label: string;
+  required?: boolean;
+  children: React.ReactNode;
+}) => (
+  <div className="rounded-xl border border-white/10 bg-white/[0.03] px-4 pt-3 pb-3 focus-within:border-primary/60 focus-within:bg-white/[0.06] transition-colors">
+    <label className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+      {label}
+      {required && <span className="text-primary"> *</span>}
+    </label>
+    <div className="mt-1.5">{children}</div>
+  </div>
+);
+
+const SummaryRow = ({ label, value }: { label: string; value: string }) => (
+  <div className="flex justify-between gap-4">
+    <span>{label}</span>
+    <span className="text-foreground text-right truncate max-w-[60%]">{value}</span>
+  </div>
+);
 
 export default QuoteWidget;

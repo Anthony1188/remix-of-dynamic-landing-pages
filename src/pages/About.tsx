@@ -46,9 +46,9 @@ const About = () => {
 
       <section className="border-b border-border">
         <div className="mx-auto max-w-7xl px-6 lg:px-10 py-24">
-          <div className="grid md:grid-cols-3 gap-px bg-border">
+          <div className="grid md:grid-cols-3 gap-4">
             {principles.map((p) => (
-              <div key={p.t} className="bg-background p-10">
+              <div key={p.t} className="glass glass-hover rounded-sm p-10">
                 <span className="font-mono text-xs text-primary">{p.n}</span>
                 <h3 className="mt-6 text-2xl font-medium leading-tight">{p.t}</h3>
                 <p className="mt-4 text-muted-foreground leading-relaxed text-sm">{p.d}</p>

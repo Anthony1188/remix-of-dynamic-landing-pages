@@ -153,7 +153,7 @@ const Index = () => {
               { Icon: Snowflake, t: "Sublimating", d: "CO₂ returns to atmosphere — no cleanup of the cleaner." },
               { Icon: ShieldCheck, t: "Insured & certified", d: "Trained technicians, marine-rated equipment, full coverage." },
             ].map(({ Icon, t, d }) => (
-              <div key={t} className="glass rounded-lg p-8 hover:bg-white/10 transition-colors">
+              <div key={t} className="glass glass-hover rounded-sm p-8">
                 <Icon className="text-primary" size={28} strokeWidth={1.5} />
                 <h3 className="mt-5 text-lg font-medium">{t}</h3>
                 <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{d}</p>
@@ -191,8 +191,8 @@ const Index = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: i * 0.1 }}
               >
-                <Link to={s.to} className="group block">
-                  <div className="relative aspect-[4/5] overflow-hidden bg-secondary">
+                <Link to={s.to} className="group block glass glass-hover rounded-sm overflow-hidden">
+                  <div className="relative aspect-[4/5] overflow-hidden">
                     <img
                       src={s.img}
                       alt={s.title}
@@ -201,8 +201,8 @@ const Index = () => {
                       width={1024}
                       height={1280}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
-                    <span className="absolute top-5 left-5 font-mono text-xs text-primary">
+                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+                    <span className="absolute top-5 left-5 font-mono text-xs text-primary glass rounded-sm px-2.5 py-1">
                       {s.no}
                     </span>
                     <ArrowUpRight

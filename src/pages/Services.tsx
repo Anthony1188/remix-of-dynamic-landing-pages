@@ -79,7 +79,7 @@ const Services = () => {
         <section key={s.title} className="border-b border-border">
           <div className="mx-auto max-w-7xl px-6 lg:px-10 py-24">
             <div className={`grid lg:grid-cols-2 gap-12 lg:gap-20 items-center ${i % 2 === 1 ? "lg:[&>*:first-child]:order-2" : ""}`}>
-              <div className="relative aspect-[4/5] overflow-hidden">
+              <div className="relative aspect-[4/5] overflow-hidden glass rounded-sm">
                 <img
                   src={s.img}
                   alt={s.title}
@@ -88,7 +88,7 @@ const Services = () => {
                   width={1024}
                   height={1280}
                 />
-                <span className="absolute top-6 left-6 font-mono text-xs text-primary bg-background/70 backdrop-blur px-3 py-1.5">
+                <span className="absolute top-6 left-6 font-mono text-xs text-primary glass rounded-sm px-3 py-1.5">
                   {s.no} / {sections.length.toString().padStart(2, "0")}
                 </span>
               </div>

@@ -47,7 +47,7 @@ const Contact = () => {
         <div className="lg:col-span-7 space-y-8">
           <QuoteWidget />
           {submitted ? (
-            <div className="glass rounded-lg p-10">
+            <div className="glass rounded-sm p-10">
               <div className="font-mono text-xs uppercase tracking-widest text-primary">
                 / Received
               </div>
@@ -77,7 +77,7 @@ const Contact = () => {
                 { name: "phone", label: "Phone", type: "tel", required: false },
                 { name: "asset", label: "Asset / vehicle / facility", type: "text", required: false },
               ].map((f) => (
-                <div key={f.name} className="glass rounded-lg px-6 pt-5 pb-4 focus-within:bg-white/10 transition-colors">
+                <div key={f.name} className="glass glass-hover rounded-sm px-6 pt-5 pb-4">
                   <label className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
                     {f.label}{f.required && <span className="text-primary"> *</span>}
                   </label>
@@ -89,7 +89,7 @@ const Contact = () => {
                   />
                 </div>
               ))}
-              <div className="glass rounded-lg px-6 pt-5 pb-4 focus-within:bg-white/10 transition-colors">
+              <div className="glass glass-hover rounded-sm px-6 pt-5 pb-4">
                 <label className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
                   Service interest
                 </label>
@@ -102,7 +102,7 @@ const Contact = () => {
                   ))}
                 </select>
               </div>
-              <div className="glass rounded-lg px-6 pt-5 pb-4 focus-within:bg-white/10 transition-colors">
+              <div className="glass glass-hover rounded-sm px-6 pt-5 pb-4">
                 <label className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
                   Project brief
                 </label>
@@ -115,7 +115,7 @@ const Contact = () => {
               </div>
               <button
                 type="submit"
-                className="w-full glass-primary rounded-lg py-5 font-medium text-sm tracking-wide hover:brightness-110 transition-all inline-flex items-center justify-center gap-2 group"
+                className="w-full glass-primary rounded-sm py-5 font-medium text-sm tracking-wide hover:brightness-110 transition-all inline-flex items-center justify-center gap-2 group"
               >
                 Send Brief
                 <ArrowUpRight size={18} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />

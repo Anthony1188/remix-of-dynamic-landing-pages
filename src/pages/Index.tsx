@@ -60,12 +60,12 @@ const Index = () => {
           <img
             src={heroImg}
             alt="Dry ice cleaning a supercar"
-            className="h-full w-full object-cover opacity-50 mix-blend-luminosity"
+            className="h-full w-full object-cover"
             width={1920}
             height={1080}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/60 to-background/20" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/85 via-background/55 to-background/10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
         </div>
         <div className="absolute inset-0 grid-lines opacity-40 z-[2]" />
 

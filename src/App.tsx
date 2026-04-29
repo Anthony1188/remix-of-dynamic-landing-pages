@@ -11,6 +11,13 @@ import Contact from "./pages/Contact.tsx";
 import FAQ from "./pages/FAQ.tsx";
 import Blog from "./pages/Blog.tsx";
 import NotFound from "./pages/NotFound.tsx";
+// Admin
+import { AdminAuth } from "./admin/AdminAuth";
+import { AdminLayout } from "./admin/AdminLayout";
+import AdminOverview from "./admin/pages/AdminOverview";
+import AdminLeads from "./admin/pages/AdminLeads";
+import AdminQuotes from "./admin/pages/AdminQuotes";
+import AdminSettings from "./admin/pages/AdminSettings";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +28,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          {/* Public site */}
           <Route element={<SiteLayout />}>
             <Route path="/" element={<Index />} />
             <Route path="/services" element={<Services />} />
@@ -29,7 +37,23 @@ const App = () => (
             <Route path="/insights" element={<Blog />} />
             <Route path="/contact" element={<Contact />} />
           </Route>
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+
+          {/* Admin dashboard — password protected */}
+          <Route
+            path="/admin/*"
+            element={
+              <AdminAuth>
+                <AdminLayout />
+              </AdminAuth>
+            }
+          >
+            <Route index element={<AdminOverview />} />
+            <Route path="leads" element={<AdminLeads />} />
+            <Route path="quotes" element={<AdminQuotes />} />
+            <Route path="settings" element={<AdminSettings />} />
+          </Route>
+
+          {/* Catch-all */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

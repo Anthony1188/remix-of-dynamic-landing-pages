@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ChevronRight, Snowflake, Leaf, Gauge, ShieldCheck } from "lucide-react";
 import { AnimatedGrid } from "@/components/AnimatedGrid";
+import { ProcessSteps } from "@/components/ProcessSteps";
+import { Testimonials } from "@/components/Testimonials";
 import marineImg from "@/assets/service-marine.jpg";
 import autoImg from "@/assets/service-auto.jpg";
 import coldImg from "@/assets/service-coldchain.jpg";
@@ -263,6 +265,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      <ProcessSteps />
+      <Testimonials />
 
       {/* CTA */}
       <section className="border-t border-border bg-background">

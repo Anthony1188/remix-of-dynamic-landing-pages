@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['"Syne"', "sans-serif"],
-        body: ['"IBM Plex Sans"', "sans-serif"],
+        display: ['"Michroma"', "sans-serif"],
+        body: ['"Inter"', "ui-sans-serif", "system-ui", "sans-serif"],
         mono: ['"JetBrains Mono"', "monospace"],
       },
       colors: {
@@ -28,6 +28,14 @@ export default {
           cyan: "hsl(var(--brand-cyan))",
           blue: "hsl(var(--brand-blue))",
           ice: "hsl(var(--brand-ice))",
+          gold: "hsl(var(--brand-gold))",
+        },
+        usda: {
+          bg: "hsl(var(--background))",
+          card: "hsl(var(--card))",
+          border: "hsl(var(--border))",
+          blue: "hsl(var(--brand-cyan))",
+          gold: "hsl(var(--brand-gold))",
         },
         primary: {
           DEFAULT: "hsl(var(--primary))",

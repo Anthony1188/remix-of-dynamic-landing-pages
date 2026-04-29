@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowUpRight, Check } from "lucide-react";
+import { ChevronRight, Check } from "lucide-react";
 import autoImg from "@/assets/service-auto.jpg";
 import marineImg from "@/assets/service-marine.jpg";
 import coldImg from "@/assets/service-coldchain.jpg";
 
 const sections = [
   {
-    no: "01",
+    no: "SVC.01",
     title: "Automotive",
     tagline: "Concours-grade. Carbon-safe.",
     img: autoImg,
@@ -22,7 +22,7 @@ const sections = [
     ],
   },
   {
-    no: "02",
+    no: "SVC.02",
     title: "Marine & Yacht",
     tagline: "Dockside. Zero runoff.",
     img: marineImg,
@@ -37,7 +37,7 @@ const sections = [
     ],
   },
   {
-    no: "03",
+    no: "SVC.03",
     title: "Industrial Cold-Chain",
     tagline: "Full-solution provider.",
     img: coldImg,
@@ -60,15 +60,15 @@ const Services = () => {
 
   return (
     <div>
-      <section className="border-b border-border">
-        <div className="mx-auto max-w-7xl px-6 lg:px-10 py-24 md:py-32">
-          <span className="font-mono text-xs uppercase tracking-[0.25em] text-primary">
-            / Services
-          </span>
-          <h1 className="mt-6 text-5xl md:text-7xl font-light leading-[0.95] max-w-4xl">
-            Precision cleaning for <span className="text-gradient-brand font-medium">assets that matter</span>.
+      <section className="border-b border-border relative overflow-hidden">
+        <div className="absolute right-[10%] top-[20%] h-[180px] w-[180px] rounded-full bg-brand-blue/5 blur-[90px]" />
+        <div className="mx-auto max-w-7xl px-6 lg:px-10 py-24 md:py-32 relative">
+          <span className="eyebrow">/ Services</span>
+          <h1 className="mt-7 font-display uppercase text-[2.4rem] sm:text-[3.2rem] md:text-[4.4rem] leading-[0.95] tracking-[-0.05em] max-w-4xl">
+            Precision cleaning for <br />
+            <span className="text-brand-cyan">assets that matter.</span>
           </h1>
-          <p className="mt-8 max-w-2xl text-lg text-muted-foreground leading-relaxed">
+          <p className="mt-8 max-w-2xl text-base md:text-lg text-[hsl(216_11%_72%)] leading-relaxed font-light">
             One process — solid CO₂ accelerated to supersonic speed — applied
             with the discipline each industry demands.
           </p>
@@ -79,40 +79,42 @@ const Services = () => {
         <section key={s.title} className="border-b border-border">
           <div className="mx-auto max-w-7xl px-6 lg:px-10 py-24">
             <div className={`grid lg:grid-cols-2 gap-12 lg:gap-20 items-center ${i % 2 === 1 ? "lg:[&>*:first-child]:order-2" : ""}`}>
-              <div className="relative aspect-[4/5] overflow-hidden glass rounded-sm">
+              <div className="relative aspect-[4/5] overflow-hidden bg-card border border-border">
                 <img
                   src={s.img}
                   alt={s.title}
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-cover opacity-80 grayscale-[0.3]"
                   loading="lazy"
-                  width={1024}
-                  height={1280}
                 />
-                <span className="absolute top-6 left-6 font-mono text-xs text-primary glass rounded-sm px-3 py-1.5">
-                  {s.no} / {sections.length.toString().padStart(2, "0")}
+                <span className="absolute top-6 left-6 text-[10px] uppercase font-display text-brand-cyan tracking-[0.18em] bg-brand-cyan/10 border border-brand-cyan/30 px-2 py-1">
+                  {s.no}
                 </span>
               </div>
               <div>
-                <span className="font-mono text-xs uppercase tracking-[0.25em] text-primary">
+                <span className="font-display text-[10px] md:text-[11px] uppercase tracking-[0.18em] text-brand-gold">
                   {s.tagline}
                 </span>
-                <h2 className="mt-5 text-4xl md:text-5xl font-light leading-tight">
+                <h2 className="mt-5 font-display uppercase text-[2rem] sm:text-[2.6rem] md:text-[3.2rem] leading-[1.02] tracking-tight">
                   {s.title}
                 </h2>
-                <p className="mt-6 text-muted-foreground leading-relaxed">{s.body}</p>
+                <p className="mt-6 text-[hsl(216_11%_72%)] leading-relaxed font-light">{s.body}</p>
                 <ul className="mt-8 grid sm:grid-cols-2 gap-3">
                   {s.items.map((item) => (
-                    <li key={item} className="flex items-start gap-3 text-sm">
-                      <Check size={16} className="text-primary mt-0.5 shrink-0" strokeWidth={2.5} />
+                    <li key={item} className="flex items-start gap-3 text-sm font-light">
+                      <Check size={14} className="text-brand-cyan mt-1 shrink-0" strokeWidth={2.5} />
                       <span className="text-foreground/85">{item}</span>
                     </li>
                   ))}
                 </ul>
                 <Link
                   to="/contact"
-                  className="mt-10 inline-flex items-center gap-2 text-sm text-primary hover:gap-3 transition-all"
+                  className="mt-10 group inline-flex items-center gap-4 px-7 py-4 text-[11px] uppercase text-foreground tracking-[0.18em] font-display bg-card/90 border border-border hover-gold"
                 >
-                  Request this service <ArrowUpRight size={16} />
+                  <span className="inline-flex items-center gap-3">
+                    <span className="dot w-1.5 h-1.5 bg-brand-cyan transition-colors duration-300" />
+                    <span>Request this service</span>
+                  </span>
+                  <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
                 </Link>
               </div>
             </div>

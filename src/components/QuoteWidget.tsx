@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowUpRight, Download, RotateCcw, Snowflake, Zap } from "lucide-react";
+import { ChevronRight, Download, RotateCcw, Snowflake, Zap } from "lucide-react";
 import jsPDF from "jspdf";
 
 type CategoryId = "automotive" | "marine" | "industrial";
@@ -167,18 +167,18 @@ export const QuoteWidget = () => {
   };
 
   return (
-    <div className="glass rounded-2xl overflow-hidden">
+    <div className="bg-card border border-border overflow-hidden">
       {/* Brand hero */}
-      <div className="bg-black px-6 py-8 flex items-center justify-center border-b border-[hsl(var(--brand-cyan))]/40">
+      <div className="bg-background px-6 py-8 flex items-center justify-center border-b border-border">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-full glass-primary flex items-center justify-center">
-            <Snowflake size={20} strokeWidth={1.5} />
+          <div className="h-10 w-10 border border-brand-cyan/40 bg-card flex items-center justify-center text-brand-cyan">
+            <Snowflake size={18} strokeWidth={1.5} />
           </div>
           <div className="leading-none">
-            <div className="text-2xl font-semibold tracking-[0.2em] text-gradient-brand">
+            <div className="font-display text-xl tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan via-brand-blue to-brand-ice">
               DRYJET
             </div>
-            <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.35em] text-muted-foreground">
+            <div className="mt-2 font-display text-[9px] uppercase tracking-[0.3em] text-muted-foreground">
               Solutions
             </div>
           </div>
@@ -188,10 +188,10 @@ export const QuoteWidget = () => {
       {!estimate ? (
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
           <div>
-            <div className="font-mono text-[10px] uppercase tracking-widest text-primary">
+            <div className="font-display text-[10px] uppercase tracking-[0.2em] text-brand-cyan">
               / Technician Analysis
             </div>
-            <h3 className="mt-2 text-2xl font-light leading-tight">
+            <h3 className="mt-3 font-display uppercase text-lg leading-tight tracking-tight">
               Submit your project for an expert quote.
             </h3>
           </div>
@@ -255,42 +255,42 @@ export const QuoteWidget = () => {
           <button
             type="submit"
             disabled={generating || !name.trim() || !email.trim()}
-            className="w-full glass-primary rounded-xl py-4 font-medium text-sm tracking-wide hover:brightness-110 transition-all inline-flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed group"
+            className="w-full group bg-card border border-border py-4 px-5 inline-flex items-center justify-center gap-4 text-[11px] uppercase tracking-[0.18em] font-display text-foreground hover-gold disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {generating ? (
               <>
-                <span className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                <span className="h-4 w-4 rounded-full border-2 border-foreground/20 border-t-brand-cyan animate-spin" />
                 Analyzing project…
               </>
             ) : (
               <>
-                Get my DryJet quote
-                <ArrowUpRight
-                  size={16}
-                  className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
-                />
+                <span className="inline-flex items-center gap-3">
+                  <span className="dot w-1.5 h-1.5 bg-brand-cyan transition-colors duration-300" />
+                  <span>Get my DryJet quote</span>
+                </span>
+                <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
               </>
             )}
           </button>
         </form>
       ) : (
         <div className="p-6 space-y-5">
-          <div className="rounded-xl glass-primary p-6">
-            <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest opacity-80">
+          <div className="bg-background border border-brand-cyan/40 p-6">
+            <div className="flex items-center gap-2 font-display text-[10px] uppercase tracking-[0.2em] text-brand-cyan">
               <Zap size={12} />
               Official estimate for {estimate.customer}
             </div>
-            <div className="mt-3 text-4xl font-light tracking-tight">
+            <div className="mt-4 font-display text-3xl tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan via-brand-blue to-brand-ice">
               ${estimate.low.toLocaleString()}
-              <span className="text-2xl opacity-70"> – </span>
+              <span className="text-2xl text-muted-foreground"> – </span>
               ${estimate.high.toLocaleString()}
             </div>
-            <div className="mt-2 text-xs opacity-80">
+            <div className="mt-3 text-xs text-muted-foreground font-light">
               ~{estimate.hours} hrs · {estimate.category} · Ref {estimate.reference}
             </div>
           </div>
 
-          <div className="space-y-2 text-xs text-muted-foreground">
+          <div className="space-y-2 text-xs text-muted-foreground font-light">
             <SummaryRow label="Asset" value={estimate.asset} />
             <SummaryRow label="Email" value={estimate.email} />
             <SummaryRow label="Issued" value={estimate.date} />
@@ -300,25 +300,25 @@ export const QuoteWidget = () => {
             <button
               type="button"
               onClick={downloadPdf}
-              className="w-full glass-primary rounded-xl py-3.5 text-sm font-medium inline-flex items-center justify-center gap-2 hover:brightness-110 transition-all"
+              className="w-full group bg-card border border-border py-3.5 px-5 inline-flex items-center justify-center gap-3 text-[11px] uppercase tracking-[0.18em] font-display text-foreground hover-gold"
             >
-              <Download size={16} />
+              <Download size={14} />
               Download official PDF report
             </button>
             <button
               type="button"
               onClick={reset}
-              className="w-full rounded-xl py-3 text-sm border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] transition-colors inline-flex items-center justify-center gap-2 text-muted-foreground"
+              className="w-full py-3 px-5 border border-border bg-background/40 hover:bg-card transition-colors inline-flex items-center justify-center gap-3 text-[11px] uppercase tracking-[0.18em] font-display text-muted-foreground"
             >
-              <RotateCcw size={14} />
+              <RotateCcw size={12} />
               Cancel & start a new quote
             </button>
           </div>
         </div>
       )}
 
-      <div className="px-6 pb-5 pt-2 border-t border-white/5">
-        <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground text-center">
+      <div className="px-6 pb-5 pt-4 border-t border-border">
+        <div className="font-display text-[10px] uppercase tracking-[0.2em] text-muted-foreground text-center">
           DryJet Solutions LLC · Tampa Bay Operations
         </div>
       </div>
@@ -335,12 +335,12 @@ const Field = ({
   required?: boolean;
   children: React.ReactNode;
 }) => (
-  <div className="rounded-xl border border-white/10 bg-white/[0.03] px-4 pt-3 pb-3 focus-within:border-primary/60 focus-within:bg-white/[0.06] transition-colors">
-    <label className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+  <div className="border border-border bg-background/40 px-4 pt-3 pb-3 focus-within:border-brand-cyan/45 transition-colors">
+    <label className="font-display text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
       {label}
-      {required && <span className="text-primary"> *</span>}
+      {required && <span className="text-brand-cyan"> *</span>}
     </label>
-    <div className="mt-1.5">{children}</div>
+    <div className="mt-2">{children}</div>
   </div>
 );
 

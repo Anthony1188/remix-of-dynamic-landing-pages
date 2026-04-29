@@ -1,32 +1,36 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Snowflake, Leaf, Gauge, ShieldCheck } from "lucide-react";
-import heroImg from "@/assets/hero-auto.jpg";
+import { ChevronRight, Snowflake, Leaf, Gauge, ShieldCheck } from "lucide-react";
+import { AnimatedGrid } from "@/components/AnimatedGrid";
 import marineImg from "@/assets/service-marine.jpg";
 import autoImg from "@/assets/service-auto.jpg";
 import coldImg from "@/assets/service-coldchain.jpg";
 
 const services = [
   {
-    no: "01",
+    no: "SVC.01",
     title: "Automotive",
     desc: "Concours-level restoration for supercars, classics, and exotic interiors. Engine bays, undercarriages, leather and trim — restored without abrasion.",
+    quote: "FACTORY FINISH. NO COMPROMISE.",
     img: autoImg,
+    size: "large" as const,
     to: "/services",
   },
   {
-    no: "02",
+    no: "SVC.02",
     title: "Marine & Yacht",
     desc: "Hull, deck, and engine room cleaning dockside. No runoff, no chemicals, no environmental impact on protected waters.",
     img: marineImg,
+    size: "small" as const,
     to: "/services",
   },
   {
-    no: "03",
+    no: "SVC.03",
     title: "Industrial Cold-Chain",
     desc: "Full-solution provider for food processing, pharmaceutical, and logistics. Sanitation, equipment cleaning, and dry ice supply on demand.",
     img: coldImg,
+    size: "small" as const,
     to: "/services",
   },
 ];
@@ -36,6 +40,13 @@ const stats = [
   { v: "100%", k: "Sublimation — no waste" },
   { v: "−78°C", k: "Cleaning temperature" },
   { v: "24/7", k: "Cold-chain support" },
+];
+
+const principles = [
+  { Icon: Leaf, t: "Eco-friendly", d: "No water, no solvents, no secondary waste stream." },
+  { Icon: Gauge, t: "Non-abrasive", d: "Safe on carbon fiber, electronics, leather, and gelcoat." },
+  { Icon: Snowflake, t: "Sublimating", d: "CO₂ returns to atmosphere — no cleanup of the cleaner." },
+  { Icon: ShieldCheck, t: "Insured & certified", d: "Trained technicians, marine-rated equipment, full coverage." },
 ];
 
 const Index = () => {
@@ -54,167 +65,197 @@ const Index = () => {
 
   return (
     <div>
-      {/* HERO */}
-      <section className="relative min-h-[92vh] overflow-hidden aurora-bg">
-        <div className="absolute inset-0 z-[1]">
-          <img
-            src={heroImg}
-            alt="Dry ice cleaning a supercar"
-            className="h-full w-full object-cover opacity-50 mix-blend-luminosity"
-            width={1920}
-            height={1080}
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/60 to-background/20" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
-        </div>
-        <div className="absolute inset-0 grid-lines opacity-40 z-[2]" />
+      {/* HERO — USDA-style with 3D animated grid */}
+      <section className="min-h-screen flex overflow-hidden z-10 pt-0 pb-0 relative items-center">
+        <AnimatedGrid />
 
-        <div className="relative mx-auto max-w-7xl px-6 lg:px-10 pt-28 pb-32">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="max-w-3xl"
-          >
-            <div className="flex items-center gap-3 mb-8">
-              <span className="h-px w-10 bg-primary" />
-              <span className="font-mono text-xs uppercase tracking-[0.25em] text-primary">
-                Eco · Waterless · Precision
+        <div className="w-full max-w-7xl mx-auto px-6 md:px-12 z-10 grid grid-cols-1 xl:grid-cols-12 xl:gap-12 items-end">
+          <div className="xl:col-span-9 flex flex-col pt-10 md:pt-16 xl:pt-0">
+            <motion.div
+              initial={{ x: -20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="flex gap-4 items-center mb-7 md:mb-9"
+            >
+              <span className="w-7 md:w-10 h-px bg-brand-cyan shrink-0" />
+              <span className="text-[9px] sm:text-[10px] md:text-[11px] uppercase tracking-[0.18em] text-[hsl(216_11%_75%)] font-display">
+                Waterless · Precision · Eco
               </span>
-            </div>
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-light leading-[0.95] tracking-tight">
-              Clean by <span className="text-gradient-brand font-medium">sublimation</span>.
-              <br />
-              Restored to <em className="not-italic font-normal">factory</em>.
-            </h1>
-            <p className="mt-8 max-w-xl text-lg text-muted-foreground leading-relaxed">
-              DryJet Solutions delivers concours-grade dry ice cleaning for high-end
-              automotive, marine, and industrial cold-chain clients. No water. No
-              chemicals. No residue.
-            </p>
-            <div className="mt-10 flex flex-wrap gap-4">
+            </motion.div>
+
+            <motion.h1
+              initial={{ y: 40, opacity: 0, filter: "blur(10px)" }}
+              animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
+              transition={{ duration: 1, delay: 0.4 }}
+              className="font-display uppercase leading-[0.9] tracking-[-0.065em] mb-7 md:mb-8"
+            >
+              <span className="block text-[2.55rem] sm:text-[3.6rem] md:text-[4.7rem] lg:text-[5.8rem] xl:text-[6.6rem] text-slate-700/50">
+                CLEAN.
+              </span>
+              <span className="block text-[2.55rem] sm:text-[3.6rem] md:text-[4.7rem] lg:text-[5.8rem] xl:text-[6.6rem] text-foreground">
+                BEYOND CLEAN.
+              </span>
+              <span className="block text-[2.55rem] sm:text-[3.6rem] md:text-[4.7rem] lg:text-[5.8rem] xl:text-[6.6rem] bg-clip-text text-transparent bg-gradient-to-r from-brand-cyan via-brand-blue to-brand-ice">
+                RESTORED TO FACTORY.
+              </span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+              className="text-[0.95rem] sm:text-[1rem] md:text-base md:max-w-[34rem] xl:max-w-[42rem] mb-8 leading-relaxed font-light text-[hsl(216_11%_72%)]"
+            >
+              DryJet Solutions delivers concours-grade dry ice cleaning for
+              high-end automotive, marine, and industrial cold-chain clients.
+              No water. No chemicals. No residue.
+            </motion.p>
+
+            <motion.div
+              initial={{ y: 18, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.8 }}
+              className="flex flex-wrap gap-3"
+            >
               <Link
                 to="/contact"
-                className="inline-flex items-center gap-2 px-7 py-4 glass-primary rounded-md font-medium text-sm tracking-wide hover:brightness-110 transition-all group"
+                className="group inline-flex items-center gap-4 px-5 py-3.5 md:px-7 md:py-4 text-[10px] md:text-[11px] uppercase text-foreground tracking-[0.18em] font-display bg-card/90 border border-border hover-gold"
               >
-                Request a Quote
-                <ArrowUpRight size={18} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                <span className="inline-flex items-center gap-3">
+                  <span className="dot w-1.5 h-1.5 bg-brand-cyan transition-colors duration-300" />
+                  <span>Request a Quote</span>
+                </span>
+                <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
               <Link
                 to="/services"
-                className="inline-flex items-center gap-2 px-7 py-4 glass rounded-md text-foreground font-medium text-sm tracking-wide hover:bg-white/10 transition-colors"
+                className="group inline-flex items-center gap-4 px-5 py-3.5 md:px-7 md:py-4 text-[10px] md:text-[11px] uppercase text-[hsl(216_11%_75%)] tracking-[0.18em] font-display border border-border hover:text-foreground hover:border-brand-cyan/40 transition-colors"
               >
-                Explore Services
+                <span>Explore Services</span>
+                <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Stats strip */}
-        <div className="absolute bottom-0 inset-x-0 glass border-x-0 border-b-0">
-          <div className="mx-auto max-w-7xl px-6 lg:px-10 grid grid-cols-2 md:grid-cols-4">
-            {stats.map((s, i) => (
-              <div
-                key={s.k}
-                className={`py-6 ${i > 0 ? "md:border-l border-border" : ""} ${i % 2 === 1 ? "border-l border-border md:border-l" : ""}`}
-              >
-                <div className="font-display text-3xl md:text-4xl font-light text-gradient-brand">
-                  {s.v}
-                </div>
-                <div className="mt-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                  {s.k}
-                </div>
-              </div>
-            ))}
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* PROCESS / WHY */}
-      <section className="mx-auto max-w-7xl px-6 lg:px-10 py-32">
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-20">
-          <div className="lg:col-span-5">
-            <span className="font-mono text-xs uppercase tracking-[0.25em] text-primary">
-              / The Method
-            </span>
-            <h2 className="mt-6 text-4xl md:text-5xl font-light leading-tight">
-              Solid CO₂ at <span className="text-gradient-brand font-medium">Mach speed</span>.
-            </h2>
-            <p className="mt-6 text-muted-foreground leading-relaxed">
-              Pellets of food-grade dry ice are accelerated against the surface,
-              sublimating on impact. Contaminants lift away — the substrate
-              remains untouched, dry, and ready in a fraction of the time.
-            </p>
-          </div>
-          <div className="lg:col-span-7 grid sm:grid-cols-2 gap-4">
-            {[
-              { Icon: Leaf, t: "Eco-friendly", d: "No water, no solvents, no secondary waste stream." },
-              { Icon: Gauge, t: "Non-abrasive", d: "Safe on carbon fiber, electronics, leather, and gelcoat." },
-              { Icon: Snowflake, t: "Sublimating", d: "CO₂ returns to atmosphere — no cleanup of the cleaner." },
-              { Icon: ShieldCheck, t: "Insured & certified", d: "Trained technicians, marine-rated equipment, full coverage." },
-            ].map(({ Icon, t, d }) => (
-              <div key={t} className="glass glass-hover rounded-sm p-8">
-                <Icon className="text-primary" size={28} strokeWidth={1.5} />
-                <h3 className="mt-5 text-lg font-medium">{t}</h3>
-                <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{d}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* SERVICES */}
-      <section className="border-t border-border">
-        <div className="mx-auto max-w-7xl px-6 lg:px-10 py-32">
-          <div className="flex items-end justify-between flex-wrap gap-6 mb-16">
-            <div>
-              <span className="font-mono text-xs uppercase tracking-[0.25em] text-primary">
-                / Capabilities
-              </span>
-              <h2 className="mt-6 text-4xl md:text-5xl font-light leading-tight max-w-2xl">
-                Three industries. <span className="text-gradient-brand font-medium">One method.</span>
-              </h2>
-            </div>
-            <Link
-              to="/services"
-              className="inline-flex items-center gap-2 text-sm text-primary hover:gap-3 transition-all"
+      {/* STATS */}
+      <section className="border-t border-border bg-background">
+        <div className="mx-auto max-w-7xl grid grid-cols-2 md:grid-cols-4">
+          {stats.map((s, i) => (
+            <div
+              key={s.k}
+              className={`px-6 lg:px-10 py-10 ${i > 0 ? "md:border-l border-border" : ""} ${
+                i % 2 === 1 ? "border-l border-border md:border-l" : ""
+              } ${i === 2 ? "border-t md:border-t-0 border-border" : ""} ${
+                i === 3 ? "border-t md:border-t-0 border-border" : ""
+              }`}
             >
-              All services <ArrowUpRight size={16} />
-            </Link>
+              <div className="font-display text-3xl md:text-4xl text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan via-brand-blue to-brand-ice">
+                {s.v}
+              </div>
+              <div className="mt-3 font-display text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                {s.k}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* METHOD / WHY */}
+      <section className="border-t border-border relative overflow-hidden bg-background">
+        <div className="absolute left-[10%] top-[20%] h-[180px] w-[180px] rounded-full bg-brand-cyan/5 blur-[90px]" />
+        <div className="mx-auto max-w-7xl px-6 lg:px-10 py-24 md:py-32 relative">
+          <div className="grid lg:grid-cols-12 gap-12 lg:gap-20">
+            <div className="lg:col-span-5">
+              <span className="eyebrow">/ The Method</span>
+              <h2 className="mt-6 font-display uppercase text-[2rem] sm:text-[2.4rem] md:text-[3rem] leading-[0.95] tracking-tight">
+                Solid CO₂ at <br />
+                <span className="text-brand-cyan">Mach speed.</span>
+              </h2>
+              <p className="mt-6 text-[hsl(216_11%_72%)] leading-relaxed font-light max-w-md">
+                Pellets of food-grade dry ice are accelerated against the surface,
+                sublimating on impact. Contaminants lift away — the substrate
+                remains untouched, dry, and ready in a fraction of the time.
+              </p>
+              <div className="mt-6 flex gap-2">
+                <div className="w-2 h-2 bg-border" />
+                <div className="w-2 h-2 bg-brand-cyan" />
+                <div className="w-2 h-2 bg-brand-gold" />
+              </div>
+            </div>
+            <div className="lg:col-span-7 grid sm:grid-cols-2 gap-4">
+              {principles.map(({ Icon, t, d }) => (
+                <div key={t} className="bg-card border border-border p-8 transition-colors hover:border-brand-cyan/30">
+                  <Icon className="text-brand-cyan" size={26} strokeWidth={1.5} />
+                  <h3 className="mt-5 text-base font-display uppercase tracking-tight text-foreground">{t}</h3>
+                  <p className="mt-3 text-sm text-[hsl(216_11%_72%)] leading-relaxed font-light">{d}</p>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="grid md:grid-cols-3 gap-6">
+        </div>
+      </section>
+
+      {/* SERVICES — ENV-card grid */}
+      <section className="border-t border-border bg-background relative overflow-hidden">
+        <div className="absolute right-[10%] top-[16%] h-[180px] w-[180px] rounded-full bg-brand-blue/5 blur-[90px]" />
+        <div className="mx-auto max-w-7xl px-6 lg:px-10 py-24 md:py-32 relative z-10">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-8 mb-16">
+            <div>
+              <span className="eyebrow">/ Capabilities</span>
+              <h2 className="mt-6 font-display uppercase text-[2rem] sm:text-[2.5rem] md:text-[3.2rem] leading-none tracking-tight">
+                Three Industries. <br />
+                <span className="text-brand-cyan">One Method.</span>
+              </h2>
+              <p className="mt-6 text-base text-[hsl(216_11%_72%)] font-light max-w-xl leading-relaxed">
+                A premium cleaning method must translate across formats, surfaces,
+                and contexts. The same architectural logic, three experiential realities.
+              </p>
+            </div>
+            <div className="flex gap-2 mb-2">
+              <div className="w-2 h-2 bg-border" />
+              <div className="w-2 h-2 bg-brand-cyan" />
+              <div className="w-2 h-2 bg-brand-gold" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {services.map((s, i) => (
               <motion.div
                 key={s.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ y: 30, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: i * 0.1 }}
+                transition={{ delay: i * 0.1 }}
+                className={`group relative overflow-hidden bg-background border border-border transition-colors duration-500 hover:border-brand-cyan/30 ${
+                  s.size === "large" ? "md:col-span-2 md:row-span-2" : ""
+                }`}
               >
-                <Link to={s.to} className="group block glass glass-hover rounded-sm overflow-hidden">
-                  <div className="relative aspect-[4/5] overflow-hidden">
+                <Link to={s.to} className="block">
+                  <div className="relative aspect-video overflow-hidden">
                     <img
                       src={s.img}
                       alt={s.title}
-                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      className="w-full h-full object-cover transition-all duration-700 opacity-60 grayscale group-hover:scale-105 group-hover:opacity-100 group-hover:grayscale-0"
                       loading="lazy"
-                      width={1024}
-                      height={1280}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
-                    <span className="absolute top-5 left-5 font-mono text-xs text-primary glass rounded-sm px-2.5 py-1">
-                      {s.no}
-                    </span>
-                    <ArrowUpRight
-                      size={20}
-                      className="absolute top-5 right-5 text-foreground opacity-0 group-hover:opacity-100 transition-opacity"
-                    />
-                    <div className="absolute bottom-0 inset-x-0 p-6">
-                      <h3 className="text-2xl font-medium">{s.title}</h3>
-                      <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                        {s.desc}
-                      </p>
+                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+                  </div>
+
+                  <div className="p-6 sm:p-8 relative -mt-12 z-10">
+                    <div className="mb-4">
+                      <span className="text-[10px] uppercase font-display text-brand-cyan tracking-[0.18em] bg-brand-cyan/10 border border-brand-cyan/30 px-2 py-1">
+                        {s.no}
+                      </span>
                     </div>
+                    <h3 className="text-lg uppercase text-foreground font-display mb-3 tracking-tight">{s.title}</h3>
+                    <p className="text-sm font-light text-[hsl(216_11%_72%)] leading-relaxed mb-4">{s.desc}</p>
+                    {s.quote && (
+                      <p className="text-xs font-medium text-brand-gold tracking-wide italic font-display">
+                        {s.quote}
+                      </p>
+                    )}
                   </div>
                 </Link>
               </motion.div>
@@ -224,24 +265,28 @@ const Index = () => {
       </section>
 
       {/* CTA */}
-      <section className="border-t border-border">
-        <div className="mx-auto max-w-7xl px-6 lg:px-10 py-32">
+      <section className="border-t border-border bg-background">
+        <div className="mx-auto max-w-7xl px-6 lg:px-10 py-24 md:py-32">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <h2 className="text-4xl md:text-6xl font-light leading-[1.05]">
-              Your asset deserves the <span className="text-gradient-brand font-medium">cleanest restoration</span> available.
+            <h2 className="font-display uppercase text-[2rem] sm:text-[2.6rem] md:text-[3.4rem] leading-[1.02] tracking-tight">
+              Your asset deserves the <br />
+              <span className="text-brand-cyan">cleanest restoration available.</span>
             </h2>
             <div className="lg:pl-12">
-              <p className="text-muted-foreground text-lg leading-relaxed">
+              <p className="text-[hsl(216_11%_72%)] text-base leading-relaxed font-light">
                 Mobile service across the region. Dockside. In your garage. At
                 your facility. Tell us what you need cleaned — we bring the
                 jet stream.
               </p>
               <Link
                 to="/contact"
-                className="mt-8 inline-flex items-center gap-2 px-7 py-4 glass-primary rounded-md font-medium text-sm tracking-wide hover:brightness-110 transition-all group"
+                className="mt-8 group inline-flex items-center gap-4 px-7 py-4 text-[11px] uppercase text-foreground tracking-[0.18em] font-display bg-card/90 border border-border hover-gold"
               >
-                Start a Project
-                <ArrowUpRight size={18} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                <span className="inline-flex items-center gap-3">
+                  <span className="dot w-1.5 h-1.5 bg-brand-cyan transition-colors duration-300" />
+                  <span>Start a Project</span>
+                </span>
+                <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
             </div>
           </div>

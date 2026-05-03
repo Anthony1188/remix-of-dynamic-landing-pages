@@ -10,6 +10,7 @@ import Services from "./pages/Services.tsx";
 import Contact from "./pages/Contact.tsx";
 import FAQ from "./pages/FAQ.tsx";
 import Blog from "./pages/Blog.tsx";
+import DesignTokens from "./pages/DesignTokens.tsx";
 import NotFound from "./pages/NotFound.tsx";
 // Admin
 import { AdminAuth } from "./admin/AdminAuth";
@@ -36,6 +37,7 @@ const App = () => (
             <Route path="/faq" element={<FAQ />} />
             <Route path="/insights" element={<Blog />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/design-tokens" element={<DesignTokens />} />
           </Route>
 
           {/* Admin dashboard — password protected */}

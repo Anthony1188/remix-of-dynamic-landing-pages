@@ -1,4 +1,7 @@
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { Switch } from "@/components/ui/switch";
+import { Sun, Moon } from "lucide-react";
 
 const swatches: { name: string; varName: string; fg?: string }[] = [
   { name: "Background", varName: "--background", fg: "--foreground" },
@@ -40,19 +43,36 @@ function Swatch({ label, varName, fg }: { label: string; varName: string; fg?: s
 }
 
 export default function DesignTokens() {
+  const [light, setLight] = useState(false);
   return (
-    <div className="aurora-bg">
+    <div className={`aurora-bg ${light ? "theme-light" : ""}`}>
       <div className="grid-lines">
         <div className="container mx-auto px-4 py-16 md:py-24 space-y-16">
           <header className="space-y-4">
-            <div className="eyebrow">Design Tokens</div>
-            <h1 className="text-4xl md:text-6xl font-display text-balance">
-              DryJet <span className="text-gradient-brand">System Preview</span>
-            </h1>
-            <p className="text-muted-foreground max-w-2xl font-sans-body">
-              Verify colors, typography, borders, and card surfaces against the
-              template across all sections.
-            </p>
+            <div className="flex items-start justify-between gap-4 flex-wrap">
+              <div className="space-y-4">
+                <div className="eyebrow">Design Tokens</div>
+                <h1 className="text-4xl md:text-6xl font-display text-balance">
+                  DryJet <span className="text-gradient-brand">System Preview</span>
+                </h1>
+                <p className="text-muted-foreground max-w-2xl font-sans-body">
+                  Verify colors, typography, borders, and card surfaces against the
+                  template across all sections.
+                </p>
+              </div>
+              <div className="glass flex items-center gap-3 px-4 py-3">
+                <Moon className="h-4 w-4 text-muted-foreground" />
+                <Switch
+                  checked={light}
+                  onCheckedChange={setLight}
+                  aria-label="Toggle light theme"
+                />
+                <Sun className="h-4 w-4 text-muted-foreground" />
+                <span className="font-mono text-[11px] text-muted-foreground ml-1">
+                  {light ? "LIGHT" : "DARK"}
+                </span>
+              </div>
+            </div>
           </header>
 
           {/* Brand colors */}

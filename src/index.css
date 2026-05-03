@@ -65,6 +65,42 @@
     --shadow-glow: 0 0 60px -10px hsl(var(--brand-cyan) / 0.35);
     --shadow-elevation: 0 30px 80px -20px hsl(0 0% 0% / 0.6);
   }
+
+  /* Light theme overrides — applied via .theme-light wrapper */
+  .theme-light {
+    --background: 210 20% 98%;
+    --foreground: 220 15% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 15% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 15% 12%;
+
+    --primary: 204 80% 40%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 16% 93%;
+    --secondary-foreground: 220 15% 12%;
+
+    --muted: 210 16% 95%;
+    --muted-foreground: 220 9% 38%;
+
+    --accent: 36 60% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    --border: 220 13% 86%;
+    --input: 220 13% 86%;
+    --ring: 204 80% 40%;
+
+    --brand-cyan: 204 80% 40%;
+    --brand-blue: 210 80% 45%;
+    --brand-ice:  204 70% 60%;
+    --brand-gold: 36 60% 42%;
+
+    color: hsl(var(--foreground));
+    background-color: hsl(var(--background));
+  }
 }
 
 @layer base {
